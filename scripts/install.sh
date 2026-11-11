@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install specometer binary and link specometer-dispatch into agent skill dirs.
+# Install specometer binary and link specometer-dispatch (Rust multi-select TUI).
 set -euo pipefail
 
 REPO_URL="${SPECOMETER_REPO:-https://github.com/orenvill/specometer.git}"
@@ -16,25 +16,19 @@ usage() {
   cat <<EOF
 Usage: ./scripts/install.sh [options]
 
-Install specometer CLI, then interactively choose which agents receive
-specometer-dispatch (Cursor, Claude Code, Codex, …).
+Install specometer, then open a small TUI to pick agents (Cursor, Claude, Codex, …).
 
 Options:
   --prefix PATH          Install binary to PREFIX/bin (default: ~/.local)
-  --agents ID,ID         Non-interactive, e.g. cursor,claude,codex (see skills/.../agents.json)
-  --all-agents           Link all supported agents (creates missing project dirs)
-  --non-interactive      Link only where agent folders already exist; no prompts
+  --agents ID,ID         Non-interactive, e.g. cursor,claude
+  --all-agents           Install skill for every supported agent
+  --non-interactive      Only agents whose folders already exist
   --skills-only          Skip binary install
   --bin-only             Skip skill links
-  --from-git             Clone repo to a temp dir and install from there
-  -h, --help             Show help
+  --from-git             Clone to temp dir and install
+  -h, --help
 
-Quick start:
-  git clone --depth 1 ${REPO_URL}
-  cd specometer
-  ./scripts/install.sh
-
-Ensure PREFIX/bin is on PATH.
+  git clone --depth 1 ${REPO_URL} && cd specometer && ./scripts/install.sh
 EOF
 }
 
@@ -56,16 +50,7 @@ while [[ $# -gt 0 ]]; do
     --skills-only) SKILLS_ONLY=1; shift ;;
     --bin-only) BIN_ONLY=1; shift ;;
     --from-git) FROM_GIT=1; shift ;;
-    --create-agent-dirs)
-      echo "note: --create-agent-dirs is deprecated; use interactive install or --all-agents" >&2
-      ALL_AGENTS=1
-      NONINTERACTIVE=1
-      shift
-      ;;
-    --user)
-      echo "note: --user is deprecated; choose 'Cursor (global)' in the interactive menu" >&2
-      shift
-      ;;
+    --create-agent-dirs | --user) shift ;;
     -h | --help)
       usage
       exit 0
@@ -104,7 +89,7 @@ elif [[ "${FROM_GIT}" -eq 1 ]]; then
   git clone --depth 1 "${REPO_URL}" "${CLONE_TMP}/specometer"
   ROOT="${CLONE_TMP}/specometer"
 else
-  echo "error: not inside specometer checkout; use --from-git or clone the repository" >&2
+  echo "error: not inside specometer checkout; use --from-git or clone" >&2
   exit 1
 fi
 
@@ -123,23 +108,24 @@ install_binary() {
   echo "binary → ${BIN_DIR}/specometer"
 }
 
+SPECOMETER_BIN="${ROOT}/target/release/specometer"
+
 if [[ "${SKILLS_ONLY}" -eq 0 ]]; then
   install_binary
+else
+  cargo build --release --manifest-path "${ROOT}/Cargo.toml" -q
 fi
 
 if [[ "${BIN_ONLY}" -eq 0 ]]; then
-  selected=""
   if [[ -n "${AGENTS_CSV}" ]]; then
-    selected="${AGENTS_CSV//,/ }"
-    specometer_install_skills_selected "${ROOT}" "${selected}" || exit 1
+    specometer_install_skills_selected "${ROOT}" "${AGENTS_CSV}" "${SPECOMETER_BIN}"
+  elif [[ "${ALL_AGENTS}" -eq 1 ]]; then
+    specometer_install_skills_all "${ROOT}" "${SPECOMETER_BIN}"
   elif [[ "${NONINTERACTIVE}" -eq 1 ]]; then
-    specometer_install_skills_noninteractive "${ROOT}" "${ALL_AGENTS}" || {
-      echo "hint: run without --non-interactive to pick agents in a short menu" >&2
-      exit 1
-    }
+    specometer_install_skills_selected "${ROOT}" "" "${SPECOMETER_BIN}"
   else
-    specometer_prompt_agent_selection "${ROOT}"
-    specometer_install_skills_selected "${ROOT}" "${SPECOMETER_SELECTED_AGENT_IDS}" || true
+  echo ""
+  "${SPECOMETER_BIN}" agents-install --repo "${ROOT}"
   fi
 fi
 

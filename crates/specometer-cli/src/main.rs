@@ -1,3 +1,5 @@
+mod agents_install;
+
 use std::fs;
 use std::path::PathBuf;
 use std::process;
@@ -19,8 +21,10 @@ enum Commands {
     Slice(SliceArgs),
     Bind(SliceArgs),
     Validate(ValidateArgs),
-    /// Install CLI (run from repo root); use scripts/install.sh for agent skill menu
+    /// Run install.sh (build + skill TUI)
     Install(InstallArgs),
+    /// Link specometer-dispatch skill (multi-select TUI)
+    AgentsInstall(AgentsInstallArgs),
 }
 
 #[derive(clap::Args)]
@@ -35,6 +39,18 @@ struct SliceArgs {
     heuristic: String,
     #[arg(long)]
     strict: bool,
+}
+
+#[derive(clap::Args)]
+struct AgentsInstallArgs {
+    #[arg(long, default_value = ".")]
+    repo: PathBuf,
+    #[arg(long)]
+    non_interactive: bool,
+    #[arg(long)]
+    all_agents: bool,
+    #[arg(long, value_delimiter = ',')]
+    agents: Option<Vec<String>>,
 }
 
 #[derive(clap::Args)]
@@ -87,6 +103,15 @@ fn run() -> Result<(), i32> {
         }
         Commands::Install(args) => {
             execute_install(&args)?;
+        }
+        Commands::AgentsInstall(args) => {
+            let csv = args.agents.as_ref().map(|v| v.join(","));
+            agents_install::run_agents_install(
+                &args.repo,
+                csv.as_deref(),
+                args.all_agents,
+                args.non_interactive,
+            )?;
         }
     }
     Ok(())

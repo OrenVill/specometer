@@ -11,7 +11,7 @@
 ```
 
 - Installs `specometer` to `~/.local/bin`
-- **Interactive menu**: toggle agents with numbers `1`–`6`, `a` = all, `c` = confirm, `q` = skip skills
+- **TUI**: arrow keys + **Space** to toggle, **Enter** to confirm (via `dialoguer`)
 - Creates `.cursor/skills`, `.claude/skills`, etc. only for agents you checked
 
 Non-interactive: `./scripts/install.sh --agents cursor,claude` or `--all-agents`

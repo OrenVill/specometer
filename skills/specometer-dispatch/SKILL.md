@@ -26,7 +26,7 @@ From a git clone:
 ./scripts/install.sh
 ```
 
-That builds `specometer`, installs it to `~/.local/bin`, then shows a **checklist**: pick Cursor, Claude Code, Codex, OpenCode, Continue, Aider, and/or global Cursor (`~/.cursor/skills`). Press a number to toggle, `c` to confirm.
+That builds `specometer`, installs it to `~/.local/bin`, then opens a **small TUI** (Space toggle, Enter confirm) for Cursor, Claude Code, Codex, OpenCode, Continue, Aider, and/or global Cursor (`~/.cursor/skills`).
 
 Without a clone:
 
