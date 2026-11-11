@@ -875,6 +875,8 @@ git commit -m "docs: add specometer usage README"
 
 Plan complete and saved to `docs/superpowers/plans/2026-11-11-specometer.md`.
 
+**Before dispatch:** Use skill `specometer-dispatch` (repo: `skills/specometer-dispatch/SKILL.md`). Run `./scripts/slice-project-docs.sh`. Give each implementer only `.specometer/bundles/<bundle>` from `manifest.json`.
+
 **1. Subagent-Driven (recommended)** — fresh subagent per task, review between tasks.
 
 **2. Inline Execution** — implement tasks in this session with checkpoints.

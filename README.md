@@ -77,8 +77,12 @@ For production plans, add `{#spec:section-id}` on spec headings and `**Spec refs
 
 ## Orchestrator workflow
 
-1. Run `specometer slice` (or use committed artifacts from `bind`).
-2. Point each implementer at a single bundle file, e.g. `bundles/task-03-login-api.md`.
+After **writing-plans** saves a plan, run `./scripts/slice-project-docs.sh` (or `specometer slice`), then dispatch subagents with **one bundle file** each under `.specometer/bundles/`.
+
+Shipped agent skill: [skills/specometer-dispatch](skills/specometer-dispatch/SKILL.md) — install via [skills/README.md](skills/README.md). It documents bundle paths, the script, and what implementers must (and must not) read.
+
+1. Slice (script or CLI).
+2. Point each implementer at `task-NN-<slug>.md` only (see `manifest.json`).
 3. Use `validate --strict` in CI when every task should declare **Spec refs**.
 
 ## Test

@@ -235,9 +235,11 @@ Fixtures live under `crates/specometer-core/tests/fixtures/` (no production code
 
 ## 10. Orchestrator contract (any runtime) {#spec:orchestrator}
 
-1. Run `specometer slice` (or use pre-bound artifacts from CI)
-2. For task N, point the implementer at `out/task-NN-<slug>.md` only
-3. For task reviewer, optionally provide manifest entry for that task plus the bundle (reviewer does not need full spec if bundle was strict-validated)
+1. After the implementation plan is written, run `scripts/slice-project-docs.sh` (or `specometer slice`) with the spec and plan paths.
+2. Bundles default to `.specometer/bundles/task-NN-<slug>.md` with `manifest.json` alongside them.
+3. For task N, point the implementer at that bundle path only—not the full spec or plan.
+4. For task reviewer, optionally provide manifest entry for that task plus the bundle.
+5. Repo skill `skills/specometer-dispatch/SKILL.md` encodes this handoff for agents (install from `skills/README.md`).
 
 Future v2: optional `specometer explain task-3` to print why sections were chosen (debugging heuristics).
 
