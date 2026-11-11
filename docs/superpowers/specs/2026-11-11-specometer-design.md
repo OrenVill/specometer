@@ -56,7 +56,7 @@
 
 | Package | Responsibility |
 |---------|----------------|
-| `@specometer/core` | Markdown AST, indexes, resolution, bundle assembly |
+| `specometer-core` | Markdown AST, indexes, resolution, bundle assembly |
 | `specometer` (CLI) | Argument parsing, I/O paths, exit codes, stdout summaries |
 
 **Commands (v1)**
