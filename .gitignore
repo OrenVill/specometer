@@ -1,3 +1,5 @@
+/.devbox/
+/.devcontainer/
 /target/
 **/*.snap.new
 .specometer/bundles/

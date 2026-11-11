@@ -1,7 +1,0 @@
-{
-  "name": "specometer",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  "remoteUser": "node"
-}
