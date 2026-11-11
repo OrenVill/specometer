@@ -9,3 +9,12 @@ fn parses_global_constraints_and_tasks() {
     assert_eq!(plan.tasks[0].spec_refs, vec!["spec:auth".to_string()]);
     assert_eq!(plan.tasks[0].slug, "task-01-scaffold");
 }
+
+#[test]
+fn global_constraints_stop_before_next_h2() {
+    let src = include_str!("../../../docs/superpowers/plans/2026-11-11-specometer.md");
+    let plan = PlanIndex::from_markdown(src).unwrap();
+    assert!(plan.global_constraints.contains("Rust edition"));
+    assert!(!plan.global_constraints.contains("Target file map"));
+    assert_eq!(plan.tasks.len(), 9);
+}

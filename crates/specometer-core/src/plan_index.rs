@@ -74,8 +74,11 @@ fn extract_global_constraints(src: &str) -> Result<String, SpecometerError> {
     let after = &src[start + marker.len()..];
     let after = after.trim_start_matches(['\r', '\n']);
     let end = after
-        .find("\n### Task ")
-        .or_else(|| after.find("\n---"))
+        .find("\n---")
+        .into_iter()
+        .chain(after.find("\n## ").into_iter())
+        .chain(after.find("\n### Task ").into_iter())
+        .min()
         .unwrap_or(after.len());
     Ok(after[..end].trim().to_string())
 }
