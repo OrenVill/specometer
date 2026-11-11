@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = ["crates/specometer-core", "crates/specometer-cli"]
+
+[profile.release]
+lto = true
+strip = true
