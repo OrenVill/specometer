@@ -23,18 +23,18 @@ If the spec or plan changed, run the script again and dispatch against the new b
 From a git clone:
 
 ```bash
-./scripts/install.sh --create-agent-dirs
+./scripts/install.sh
 ```
 
-That builds `specometer`, installs it to `~/.local/bin`, and **symlinks this skill** into any agent folder already in the project (`.cursor`, `.claude`, `.codex`, `.opencode`, `.continue`, `.aider`). Use `--create-agent-dirs` the first time so `.cursor/skills/specometer-dispatch` (and peers) are created.
+That builds `specometer`, installs it to `~/.local/bin`, then shows a **checklist**: pick Cursor, Claude Code, Codex, OpenCode, Continue, Aider, and/or global Cursor (`~/.cursor/skills`). Press a number to toggle, `c` to confirm.
 
 Without a clone:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/orenvill/specometer/master/scripts/install.sh | bash -s -- --from-git --create-agent-dirs
+curl -fsSL https://raw.githubusercontent.com/orenvill/specometer/master/scripts/install.sh | bash -s -- --from-git
 ```
 
-From the repo after install: `specometer install --create-agent-dirs`
+CI / scripts: `specometer install --agents cursor,claude` or `./scripts/install.sh --agents cursor,claude`
 
 Add `~/.local/bin` to `PATH`.
 

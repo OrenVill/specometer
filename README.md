@@ -9,17 +9,17 @@ Design: [docs/superpowers/specs/2026-11-11-specometer-design.md](docs/superpower
 ```bash
 git clone --depth 1 https://github.com/orenvill/specometer.git
 cd specometer
-./scripts/install.sh --create-agent-dirs
+./scripts/install.sh
 export PATH="${HOME}/.local/bin:${PATH}"
 ```
 
 Or without cloning:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/orenvill/specometer/master/scripts/install.sh | bash -s -- --from-git --create-agent-dirs
+curl -fsSL https://raw.githubusercontent.com/orenvill/specometer/master/scripts/install.sh | bash -s -- --from-git
 ```
 
-This installs the `specometer` binary and links the **specometer-dispatch** skill into `.cursor`, `.claude`, `.codex`, and other agent folders when present (see [skills/README.md](skills/README.md)).
+This installs the `specometer` binary, then shows a **short checklist** to choose which agents get **specometer-dispatch** (Cursor, Claude Code, Codex, …). See [skills/README.md](skills/README.md).
 
 ## Build only
 

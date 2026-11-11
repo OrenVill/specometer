@@ -10,5 +10,5 @@
     { "agent": "continue", "project_dir": ".continue", "skills_path": "skills" },
     { "agent": "aider", "project_dir": ".aider", "skills_path": "skills" }
   ],
-  "notes": "Links are created only when project_dir exists, unless install.sh --create-agent-dirs"
+  "notes": "Use scripts/install.sh interactive checklist, or --agents id,id, or --all-agents"
 }

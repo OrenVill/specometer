@@ -19,7 +19,7 @@ enum Commands {
     Slice(SliceArgs),
     Bind(SliceArgs),
     Validate(ValidateArgs),
-    /// Install CLI to PATH prefix and link agent skills (run from repo root)
+    /// Install CLI (run from repo root); use scripts/install.sh for agent skill menu
     Install(InstallArgs),
 }
 
@@ -42,15 +42,17 @@ struct InstallArgs {
     #[arg(long, default_value = ".")]
     repo: PathBuf,
     #[arg(long)]
-    create_agent_dirs: bool,
-    #[arg(long)]
-    user: bool,
-    #[arg(long)]
     skills_only: bool,
     #[arg(long)]
     bin_only: bool,
     #[arg(long)]
     prefix: Option<PathBuf>,
+    #[arg(long)]
+    non_interactive: bool,
+    #[arg(long)]
+    all_agents: bool,
+    #[arg(long)]
+    agents: Option<String>,
 }
 
 #[derive(clap::Args)]
@@ -105,17 +107,20 @@ fn execute_install(args: &InstallArgs) -> Result<(), i32> {
     }
     let mut cmd = std::process::Command::new("bash");
     cmd.arg(&script);
-    if args.create_agent_dirs {
-        cmd.arg("--create-agent-dirs");
-    }
-    if args.user {
-        cmd.arg("--user");
-    }
     if args.skills_only {
         cmd.arg("--skills-only");
     }
     if args.bin_only {
         cmd.arg("--bin-only");
+    }
+    if args.non_interactive {
+        cmd.arg("--non-interactive");
+    }
+    if args.all_agents {
+        cmd.arg("--all-agents");
+    }
+    if let Some(ref agents) = args.agents {
+        cmd.arg("--agents").arg(agents);
     }
     let prefix = args
         .prefix
