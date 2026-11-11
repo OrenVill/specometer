@@ -37,8 +37,8 @@
        └────────┬──────────┘
                 ▼
        ┌────────────────┐
-       │  @specometer/  │
-       │  core          │
+       │  specometer-   │
+       │  core (Rust)   │
        │  - SpecIndex   │
        │  - PlanIndex   │
        │  - Resolver    │
@@ -179,15 +179,26 @@ With `bind`, duplicate manifest under `.specometer/manifest.json` and record inp
 
 ## 6. Tech stack
 
+**Language: Rust (edition 2021, MSRV 1.78+)** — chosen for memory safety without a GC, predictable performance on large specs, and a single static binary with no Node/npm supply-chain surface for a tool that shapes agent context.
+
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
-| Language | TypeScript (Node 20+) | Matches typical agent tooling; strong typing for AST |
-| Markdown | `remark` + `mdast` | Reliable heading tree and position offsets for line ranges |
-| CLI | `commander` or similar | Thin wrapper over core |
-| Tests | `vitest` | Fast unit tests for resolver and closure |
-| Package layout | `packages/core`, `packages/cli` | Keeps resolver testable without spawning CLI |
+| Core crate | `specometer-core` | Library: parse, resolve, bundle; `#![forbid(unsafe_code)]` |
+| CLI crate | `specometer-cli` | Thin `clap` front-end over core; binary name `specometer` |
+| Markdown | `pulldown-cmark` (+ `pulldown-cmark-to-cmark` only if round-trip needed) | Fast; heading events with source offsets for line ranges |
+| JSON manifest | `serde` + `serde_json` | Strict schema; deny unknown fields on read where applicable |
+| Hashing | `sha2` | Input checksums for `bind` / CI |
+| Tests | `cargo test`, `insta` snapshots | Unit + integration; fixtures as golden files |
+| Layout | Cargo workspace: `crates/specometer-core`, `crates/specometer-cli` | Core testable without spawning the binary |
 
-No dependency on Cursor APIs. Published binary name: `specometer`.
+**Security posture (v1)**
+
+- No network I/O in the CLI (filesystem in, filesystem out only).
+- Avoid `unwrap()` on user-controlled paths; propagate errors with context (`anyhow` / `thiserror` in CLI vs lib boundary).
+- Keep dependency count small; optional CI: `cargo deny` for advisories and duplicate licenses.
+- Release profile: `lto = true`, `strip = true` for smaller distributable binary.
+
+No dependency on Cursor APIs.
 
 ## 7. CLI behavior and exit codes
 
@@ -220,7 +231,7 @@ Orchestrators should pass `--strict` in CI; local iteration uses default warning
 | Bundler | Snapshot of output markdown + manifest JSON |
 | CLI | Integration: fixture spec+plan → expected exit code and file count |
 
-Fixtures live under `packages/core/fixtures/` (no production code).
+Fixtures live under `crates/specometer-core/tests/fixtures/` (no production code).
 
 ## 10. Orchestrator contract (any runtime)
 
@@ -241,4 +252,4 @@ Future v2: optional `specometer explain task-3` to print why sections were chose
 - Given a 500+ line spec and 10-task plan, a subagent implementer can complete a task using only its bundle without opening spec/plan
 - `validate --strict` passes on plans that use explicit **Spec refs** for every task
 - Heuristic-only plans produce useful bundles for ≥80% of tasks in fixture suite (measured manually in fixtures; no LLM)
-- Full core test suite runs in under 5 seconds locally
+- Full `cargo test` workspace suite runs in under 5 seconds locally (release-mode resolver tests may be benchmarked separately)
