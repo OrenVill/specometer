@@ -102,10 +102,8 @@ fn section_end_line(headings: &[HeadingRecord], index: usize, last_line: usize) 
 fn body_start_line(heading_line: usize, id: Option<&str>, physical: &[&str]) -> usize {
     let idx = heading_line.saturating_sub(1);
     let mut start = heading_line + 1;
-    if id.is_some() && idx + 1 < physical.len() {
-        if comment_id_line(physical[idx + 1]) {
-            start = heading_line + 2;
-        }
+    if id.is_some() && idx + 1 < physical.len() && comment_id_line(physical[idx + 1]) {
+        start = heading_line + 2;
     }
     start
 }

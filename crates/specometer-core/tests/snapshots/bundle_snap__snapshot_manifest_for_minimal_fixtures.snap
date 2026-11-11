@@ -1,0 +1,54 @@
+---
+source: crates/specometer-core/tests/bundle_snap.rs
+expression: manifest
+---
+{
+  "spec": {
+    "path": "minimal.md",
+    "sha256": "stable"
+  },
+  "plan": {
+    "path": "minimal.md",
+    "sha256": "stable"
+  },
+  "tasks": [
+    {
+      "id": "task-1",
+      "slug": "task-01-scaffold",
+      "bundle": "task-01-scaffold.md",
+      "spec_sections": [
+        {
+          "id": "spec:auth",
+          "mode": "explicit",
+          "lines": [
+            0,
+            0
+          ]
+        }
+      ],
+      "prior_tasks": [],
+      "warnings": []
+    },
+    {
+      "id": "task-2",
+      "slug": "task-02-api",
+      "bundle": "task-02-api.md",
+      "spec_sections": [
+        {
+          "id": "spec:errors",
+          "mode": "heuristic",
+          "heading": "Errors",
+          "score": 0.5,
+          "lines": [
+            0,
+            0
+          ]
+        }
+      ],
+      "prior_tasks": [
+        "task-1"
+      ],
+      "warnings": []
+    }
+  ]
+}

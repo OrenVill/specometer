@@ -1,0 +1,6 @@
+name: specometer
+# Worker-only until package.json exists. See .devbox/README.md to enable npm run dev + port forward.
+github:
+  required: true
+docker:
+  socket: false
