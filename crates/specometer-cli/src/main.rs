@@ -19,6 +19,8 @@ enum Commands {
     Slice(SliceArgs),
     Bind(SliceArgs),
     Validate(ValidateArgs),
+    /// Install CLI to PATH prefix and link agent skills (run from repo root)
+    Install(InstallArgs),
 }
 
 #[derive(clap::Args)]
@@ -33,6 +35,22 @@ struct SliceArgs {
     heuristic: String,
     #[arg(long)]
     strict: bool,
+}
+
+#[derive(clap::Args)]
+struct InstallArgs {
+    #[arg(long, default_value = ".")]
+    repo: PathBuf,
+    #[arg(long)]
+    create_agent_dirs: bool,
+    #[arg(long)]
+    user: bool,
+    #[arg(long)]
+    skills_only: bool,
+    #[arg(long)]
+    bin_only: bool,
+    #[arg(long)]
+    prefix: Option<PathBuf>,
 }
 
 #[derive(clap::Args)]
@@ -65,8 +83,56 @@ fn run() -> Result<(), i32> {
         Commands::Validate(args) => {
             execute_validate(&args)?;
         }
+        Commands::Install(args) => {
+            execute_install(&args)?;
+        }
     }
     Ok(())
+}
+
+fn execute_install(args: &InstallArgs) -> Result<(), i32> {
+    let repo = fs::canonicalize(&args.repo).map_err(|e| {
+        eprintln!("io error: {e}");
+        3
+    })?;
+    let script = repo.join("scripts/install.sh");
+    if !script.is_file() {
+        eprintln!(
+            "error: {} not found; clone https://github.com/orenvill/specometer or pass --repo",
+            script.display()
+        );
+        return Err(1);
+    }
+    let mut cmd = std::process::Command::new("bash");
+    cmd.arg(&script);
+    if args.create_agent_dirs {
+        cmd.arg("--create-agent-dirs");
+    }
+    if args.user {
+        cmd.arg("--user");
+    }
+    if args.skills_only {
+        cmd.arg("--skills-only");
+    }
+    if args.bin_only {
+        cmd.arg("--bin-only");
+    }
+    let prefix = args
+        .prefix
+        .clone()
+        .or_else(|| std::env::var("PREFIX").ok().map(PathBuf::from));
+    if let Some(prefix) = prefix {
+        cmd.arg("--prefix").arg(prefix);
+    }
+    let status = cmd.status().map_err(|e| {
+        eprintln!("io error: {e}");
+        3
+    })?;
+    if status.success() {
+        Ok(())
+    } else {
+        Err(status.code().unwrap_or(1))
+    }
 }
 
 fn execute_slice(args: &SliceArgs, bind: bool) -> Result<(), i32> {

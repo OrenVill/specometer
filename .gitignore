@@ -3,3 +3,9 @@
 /target/
 **/*.snap.new
 .specometer/bundles/
+.cursor/skills/specometer-dispatch
+.claude/skills/specometer-dispatch
+.codex/skills/specometer-dispatch
+.opencode/skills/specometer-dispatch
+.continue/skills/specometer-dispatch
+.aider/skills/specometer-dispatch

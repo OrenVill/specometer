@@ -1,0 +1,14 @@
+{
+  "skill": "specometer-dispatch",
+  "source": "skills/specometer-dispatch",
+  "install_script": "scripts/install.sh",
+  "targets": [
+    { "agent": "cursor", "project_dir": ".cursor", "skills_path": "skills" },
+    { "agent": "claude-code", "project_dir": ".claude", "skills_path": "skills" },
+    { "agent": "codex", "project_dir": ".codex", "skills_path": "skills" },
+    { "agent": "opencode", "project_dir": ".opencode", "skills_path": "skills" },
+    { "agent": "continue", "project_dir": ".continue", "skills_path": "skills" },
+    { "agent": "aider", "project_dir": ".aider", "skills_path": "skills" }
+  ],
+  "notes": "Links are created only when project_dir exists, unless install.sh --create-agent-dirs"
+}

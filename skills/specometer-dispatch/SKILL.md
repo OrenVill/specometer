@@ -18,9 +18,27 @@ Run this workflow **immediately after** the implementation plan is saved (end of
 
 If the spec or plan changed, run the script again and dispatch against the new bundles.
 
-## Slice command (required)
+## Install specometer (once per machine / clone)
 
-From the repository root (after `cargo build --release` once, or let the script build):
+From a git clone:
+
+```bash
+./scripts/install.sh --create-agent-dirs
+```
+
+That builds `specometer`, installs it to `~/.local/bin`, and **symlinks this skill** into any agent folder already in the project (`.cursor`, `.claude`, `.codex`, `.opencode`, `.continue`, `.aider`). Use `--create-agent-dirs` the first time so `.cursor/skills/specometer-dispatch` (and peers) are created.
+
+Without a clone:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/orenvill/specometer/master/scripts/install.sh | bash -s -- --from-git --create-agent-dirs
+```
+
+From the repo after install: `specometer install --create-agent-dirs`
+
+Add `~/.local/bin` to `PATH`.
+
+## Slice command (required after each plan write)
 
 ```bash
 SPEC=docs/superpowers/specs/<your-spec>.md \
@@ -29,48 +47,35 @@ OUT=.specometer/bundles \
 ./scripts/slice-project-docs.sh
 ```
 
-Defaults inside the script (this repo’s dogfood paths):
-
-- `SPEC` → `docs/superpowers/specs/2026-11-11-specometer-design.md`
-- `PLAN` → `docs/superpowers/plans/2026-11-11-specometer.md`
-- `OUT` → `.specometer/bundles`
-
-The script runs `specometer validate --strict`, then `specometer slice`. Fix spec refs or section IDs if validation fails.
+Defaults in `scripts/slice-project-docs.sh` point at this repo’s dogfood spec/plan. The script runs `validate --strict` then `slice`.
 
 ## Where outputs live
 
 | Artifact | Path |
 |----------|------|
-| Per-task bundle (give this to implementers) | `$OUT/task-NN-<slug>.md` (e.g. `.specometer/bundles/task-04-resolver-explicit-heuristic.md`) |
+| Per-task bundle (give this to implementers) | `$OUT/task-NN-<slug>.md` |
 | Provenance and warnings | `$OUT/manifest.json` |
-| Optional CI bind copy | `.specometer/manifest.json` (only when using `specometer bind`, not the default script) |
 
-Task order and slugs come from `manifest.json` → `tasks[].slug` and `tasks[].bundle`.
+Resolve paths from `manifest.json` → `tasks[].bundle`.
 
 ## Orchestrator rules
 
 1. Run the slice script once per plan revision.
-2. For **Task N**, dispatch the implementer with:
-   - Repository root as working directory
-   - **Single context file:** absolute or repo-relative path to `$OUT/<bundle>` from the manifest
-   - Do **not** attach the full spec, full plan, or prior chat unless the manifest lists warnings for that task.
-3. Task reviewers may use the same bundle plus that task’s entry in `manifest.json`.
-4. Prefer explicit `**Spec refs:**` on each plan task and `{#spec:...}` on spec headings (see repo `README.md`).
+2. For **Task N**, dispatch the implementer with the **single bundle file** under `$OUT`—not the full spec or plan.
+3. Task reviewers may use the same bundle plus that task’s `manifest.json` entry.
+4. Use explicit `**Spec refs:**` and `{#spec:...}` when possible (see root `README.md`).
 
-## Install this skill
+## Agent coverage
 
-Copy into your skills directory so the agent can load it:
+`scripts/install.sh` links this skill when these project directories exist (see `skills/specometer-dispatch/agents.json`):
 
-```bash
-mkdir -p ~/.cursor/skills
-cp -r skills/specometer-dispatch ~/.cursor/skills/specometer-dispatch
-```
+| Directory | Typical agent |
+|-----------|----------------|
+| `.cursor/skills/` | Cursor |
+| `.claude/skills/` | Claude Code |
+| `.codex/skills/` | OpenAI Codex |
+| `.opencode/skills/` | OpenCode |
+| `.continue/skills/` | Continue |
+| `.aider/skills/` | Aider |
 
-Or symlink from a project (not committed here): `.cursor/skills/specometer-dispatch` → `skills/specometer-dispatch`.
-
-## Build specometer
-
-```bash
-cargo build --release
-# binary: target/release/specometer
-```
+If the project has `AGENTS.md`, install appends a short specometer section once.
