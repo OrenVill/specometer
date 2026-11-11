@@ -17,7 +17,7 @@
 - Resolution: explicit refs first; heuristic when empty or `--heuristic=always` (default `when-no-explicit`); top-K=3, max heuristic sections=5, max lines per section=200.
 - Bundle section order: front matter → Global Constraints → task block → Spec context → Prior task interfaces → dispatch note.
 - Exit codes: 0 success, 1 parse, 2 validation, 3 I/O.
-- **No** `cursor/` paths, Cursor APIs, or co-authored commits.
+- **No** vendor-specific path conventions, proprietary agent APIs, or co-authored commits.
 - Release profile: `lto = true`, `strip = true` in workspace `Cargo.toml`.
 - No network I/O in the CLI.
 

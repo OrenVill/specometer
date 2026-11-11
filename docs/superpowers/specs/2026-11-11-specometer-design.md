@@ -17,7 +17,7 @@
 
 ### Out of scope (v1)
 
-- Cursor-specific skills, paths under `cursor/`, or co-authored commits
+- Vendor-specific agent runtimes, proprietary host APIs, or co-authored commits
 - LLM-based slicing (reserved extension point)
 - Dispatching or running subagents
 - Editing spec/plan source files (read-only inputs)
@@ -198,7 +198,7 @@ With `bind`, duplicate manifest under `.specometer/manifest.json` and record inp
 - Keep dependency count small; optional CI: `cargo deny` for advisories and duplicate licenses.
 - Release profile: `lto = true`, `strip = true` for smaller distributable binary.
 
-No dependency on Cursor APIs.
+No dependency on proprietary agent-host APIs.
 
 ## 7. CLI behavior and exit codes {#spec:cli}
 
