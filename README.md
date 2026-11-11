@@ -57,6 +57,24 @@ Without refs, heuristics match headings from task title, files, and interfaces.
 | 2 | Validation failed (`validate` or `--strict`) |
 | 3 | I/O error |
 
+## Real use (this repository)
+
+Slice the project design spec and implementation plan:
+
+```bash
+./scripts/slice-project-docs.sh
+```
+
+Outputs under `.specometer/bundles/` (git-ignored). Point a worker at one file, e.g. `.specometer/bundles/task-04-resolver-explicit-heuristic.md`.
+
+Override inputs:
+
+```bash
+SPEC=path/to/spec.md PLAN=path/to/plan.md OUT=./bundles ./scripts/slice-project-docs.sh
+```
+
+For production plans, add `{#spec:section-id}` on spec headings and `**Spec refs:** spec:section-id` on each task (see design spec §3).
+
 ## Orchestrator workflow
 
 1. Run `specometer slice` (or use committed artifacts from `bind`).

@@ -3,7 +3,7 @@
 **Status:** Draft (design approved in brainstorming)  
 **Date:** 2026-11-11
 
-## 1. Purpose and boundaries
+## 1. Purpose and boundaries {#spec:purpose}
 
 **Specometer** is a standalone CLI and library in this repository. It reads a design spec and an implementation plan (superpowers-style markdown) and emits one **task context bundle** per plan task. A subagent (or any worker) receives only that bundle and does not need to open or search the full spec or plan.
 
@@ -27,7 +27,7 @@
 - Replace superpowers `writing-plans` or `subagent-driven-development`; specometer complements them by automating context assembly
 - Guarantee perfect semantic relevance without explicit refs (heuristics are best-effort with visible warnings)
 
-## 2. Architecture (Approach 2 + optional bind)
+## 2. Architecture (Approach 2 + optional bind) {#spec:architecture}
 
 ```
 ┌─────────────┐     ┌─────────────┐
@@ -69,7 +69,7 @@
 
 Optional **bind** mode (Approach 3) is opt-in so authors are not forced to re-bind on every typo; CI can require `bind` + committed artifacts when the team wants that gate.
 
-## 3. Input conventions
+## 3. Input conventions {#spec:conventions}
 
 ### Spec section IDs (optional, preferred)
 
@@ -107,7 +107,7 @@ Refs are comma-separated; whitespace is trimmed. Unknown IDs produce `validate` 
 
 Bundler always copies **Global Constraints** (verbatim from plan) into every task bundle.
 
-## 4. Resolution algorithm
+## 4. Resolution algorithm {#spec:resolution}
 
 Per task, build the set of spec sections `S`:
 
@@ -140,7 +140,7 @@ If `S` is empty or `--heuristic=always` (default: `when-no-explicit`):
 
 Each included spec section is tagged in manifest as `explicit` or `heuristic` with optional `score`.
 
-## 5. Bundle output schema
+## 5. Bundle output schema {#spec:bundle-schema}
 
 ### File: `out/task-NN-<slug>.md`
 
@@ -177,7 +177,7 @@ Fixed section order:
 
 With `bind`, duplicate manifest under `.specometer/manifest.json` and record input hashes for CI comparison.
 
-## 6. Tech stack
+## 6. Tech stack {#spec:tech-stack}
 
 **Language: Rust (edition 2021, MSRV 1.78+)** — chosen for memory safety without a GC, predictable performance on large specs, and a single static binary with no Node/npm supply-chain surface for a tool that shapes agent context.
 
@@ -200,7 +200,7 @@ With `bind`, duplicate manifest under `.specometer/manifest.json` and record inp
 
 No dependency on Cursor APIs.
 
-## 7. CLI behavior and exit codes
+## 7. CLI behavior and exit codes {#spec:cli}
 
 | Code | Meaning |
 |------|---------|
@@ -211,7 +211,7 @@ No dependency on Cursor APIs.
 
 **Strict mode (`--strict`):** fail on unknown spec refs, empty heuristic with no explicit refs, or unresolved **Consumes** with no matching prior **Produces** (warning-only by default).
 
-## 8. Error handling
+## 8. Error handling {#spec:errors}
 
 - **Unreadable paths:** clear message, exit 3
 - **Plan with no tasks:** exit 1
@@ -220,7 +220,7 @@ No dependency on Cursor APIs.
 
 Orchestrators should pass `--strict` in CI; local iteration uses default warnings.
 
-## 9. Testing strategy
+## 9. Testing strategy {#spec:testing}
 
 | Area | Tests |
 |------|-------|
@@ -233,7 +233,7 @@ Orchestrators should pass `--strict` in CI; local iteration uses default warning
 
 Fixtures live under `crates/specometer-core/tests/fixtures/` (no production code).
 
-## 10. Orchestrator contract (any runtime)
+## 10. Orchestrator contract (any runtime) {#spec:orchestrator}
 
 1. Run `specometer slice` (or use pre-bound artifacts from CI)
 2. For task N, point the implementer at `out/task-NN-<slug>.md` only
@@ -241,13 +241,13 @@ Fixtures live under `crates/specometer-core/tests/fixtures/` (no production code
 
 Future v2: optional `specometer explain task-3` to print why sections were chosen (debugging heuristics).
 
-## 11. Extension points (post-v1)
+## 11. Extension points (post-v1) {#spec:extensions}
 
 - `ResolverPlugin` hook for LLM-assisted section pick with cited line ranges
 - Custom ref namespaces beyond `spec:`
 - JSON bundle format for non-markdown agents
 
-## 12. Success criteria
+## 12. Success criteria {#spec:success}
 
 - Given a 500+ line spec and 10-task plan, a subagent implementer can complete a task using only its bundle without opening spec/plan
 - `validate --strict` passes on plans that use explicit **Spec refs** for every task

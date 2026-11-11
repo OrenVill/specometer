@@ -1,3 +1,4 @@
+use crate::fence::line_visible_in_markdown;
 use crate::line_span::LineSpan;
 use crate::SpecometerError;
 
@@ -81,15 +82,20 @@ fn extract_global_constraints(src: &str) -> Result<String, SpecometerError> {
 
 fn extract_tasks(src: &str) -> Result<Vec<PlanTask>, SpecometerError> {
     let physical: Vec<&str> = src.split('\n').collect();
+    let visible = line_visible_in_markdown(&physical);
     let mut tasks = Vec::new();
     let mut i = 0usize;
     while i < physical.len() {
         let line = physical[i];
+        if !visible[i] {
+            i += 1;
+            continue;
+        }
         if let Some((number, title)) = parse_task_heading(line) {
             let start_line = i + 1;
             let mut end = physical.len();
             for (j, next) in physical.iter().enumerate().skip(i + 1) {
-                if parse_task_heading(next).is_some() {
+                if visible[j] && parse_task_heading(next).is_some() {
                     end = j;
                     break;
                 }

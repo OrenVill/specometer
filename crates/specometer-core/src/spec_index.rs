@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use crate::fence::line_visible_in_markdown;
 use crate::line_span::LineSpan;
 use crate::SpecometerError;
 
@@ -22,10 +23,14 @@ type HeadingRecord = (usize, u8, String, Option<String>);
 impl SpecIndex {
     pub fn from_markdown(src: &str) -> Result<Self, SpecometerError> {
         let physical: Vec<&str> = src.split('\n').collect();
+        let visible = line_visible_in_markdown(&physical);
         let mut seen_ids = HashSet::new();
         let mut heading_records: Vec<HeadingRecord> = Vec::new();
 
         for (idx, line) in physical.iter().enumerate() {
+            if !visible[idx] {
+                continue;
+            }
             let line_no = idx + 1;
             let Some(level) = heading_level(line) else {
                 continue;
@@ -34,7 +39,7 @@ impl SpecIndex {
             let (title, inline_id) = parse_heading_title(raw_title)?;
             let mut id = inline_id;
 
-            if id.is_none() && idx + 1 < physical.len() {
+            if id.is_none() && idx + 1 < physical.len() && visible[idx + 1] {
                 if let Some(comment_id) = parse_comment_id(physical[idx + 1])? {
                     id = Some(comment_id);
                 }

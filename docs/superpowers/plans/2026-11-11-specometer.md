@@ -46,6 +46,8 @@
 
 ### Task 1: Cargo workspace scaffold
 
+**Spec refs:** spec:architecture, spec:tech-stack
+
 **Files:**
 - Create: `Cargo.toml`, `rust-toolchain.toml`, `crates/specometer-core/Cargo.toml`, `crates/specometer-core/src/lib.rs`, `crates/specometer-core/src/error.rs`, `crates/specometer-cli/Cargo.toml`, `crates/specometer-cli/src/main.rs`
 - Test: `crates/specometer-core/tests/smoke.rs`
@@ -202,6 +204,8 @@ git commit -m "chore: add specometer Cargo workspace scaffold"
 
 ### Task 2: Spec index and section IDs
 
+**Spec refs:** spec:conventions, spec:resolution
+
 **Files:**
 - Create: `crates/specometer-core/src/spec_index.rs`
 - Modify: `crates/specometer-core/src/lib.rs`
@@ -318,6 +322,8 @@ git commit -m "feat(core): parse spec heading index with section IDs"
 
 ### Task 3: Plan index (tasks, global constraints, spec refs)
 
+**Spec refs:** spec:conventions
+
 **Files:**
 - Create: `crates/specometer-core/src/plan_index.rs`
 - Modify: `crates/specometer-core/src/lib.rs`
@@ -399,6 +405,8 @@ git commit -m "feat(core): parse plan tasks and global constraints"
 ---
 
 ### Task 4: Resolver (explicit + heuristic)
+
+**Spec refs:** spec:resolution
 
 **Files:**
 - Create: `crates/specometer-core/src/resolver.rs`
@@ -486,6 +494,8 @@ git commit -m "feat(core): explicit and heuristic spec section resolver"
 
 ### Task 5: Prior-task interface closure
 
+**Spec refs:** spec:resolution, spec:orchestrator
+
 **Files:**
 - Create: `crates/specometer-core/src/closure.rs`
 - Modify: `crates/specometer-core/src/lib.rs`
@@ -556,6 +566,8 @@ git commit -m "feat(core): prior-task interface closure"
 ---
 
 ### Task 6: Bundler, manifest, and pipeline
+
+**Spec refs:** spec:bundle-schema
 
 **Files:**
 - Create: `crates/specometer-core/src/bundle.rs`, `crates/specometer-core/src/pipeline.rs`
@@ -633,6 +645,8 @@ git commit -m "feat(core): bundle markdown and manifest pipeline"
 ---
 
 ### Task 7: CLI `slice` and `bind`
+
+**Spec refs:** spec:cli
 
 **Files:**
 - Modify: `crates/specometer-cli/src/main.rs`
@@ -732,6 +746,8 @@ git commit -m "feat(cli): add slice and bind commands"
 
 ### Task 8: CLI `validate` and strict mode
 
+**Spec refs:** spec:cli, spec:errors
+
 **Files:**
 - Modify: `crates/specometer-cli/src/main.rs`, `crates/specometer-core/src/resolver.rs`, `crates/specometer-core/src/pipeline.rs`
 - Test: `crates/specometer-cli/tests/cli_validate.rs`
@@ -787,6 +803,8 @@ git commit -m "feat(cli): validate command and strict mode"
 ---
 
 ### Task 9: README and workspace verification
+
+**Spec refs:** spec:orchestrator, spec:success, spec:testing
 
 **Files:**
 - Create: `README.md`

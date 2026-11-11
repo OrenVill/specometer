@@ -1,6 +1,7 @@
 #![forbid(unsafe_code)]
 
 pub mod bundle;
+pub mod fence;
 pub mod closure;
 pub mod error;
 pub mod line_span;
